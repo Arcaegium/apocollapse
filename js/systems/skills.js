@@ -115,20 +115,56 @@ function applyOnHitEffects(bullet, enemy, effectiveness, STATE) {
   // }
 }
 
-// ── STUB: ability effects ─────────────────────────────────────
+// ── Ability effects ────────────────────────────────────────────
 function applyAbilityEffect(STATE, av) {
   switch (av.id) {
-    case 'rex':
-      // STUB: Biohazard Grenade — slow enemies in radius
+    case 'rex': {
+      // Biohazard Grenade — slow every enemy in radius around Rex
+      const radius = C.ABILITY_RADIUS;
+      STATE.enemies.forEach(en => {
+        if (Math.hypot(en.x - av.x, en.y - av.y) <= radius) {
+          en.slowTimer = 180; // 3s @ 60fps
+          en.slowMult = C.ABILITY_SLOW_MULT;
+        }
+      });
+      spawnAbilityRing(STATE, av.x, av.y, radius, av.bulletColor);
       break;
-    case 'sable':
-      // STUB: EMP Burst — stun all robots
+    }
+    case 'sable': {
+      // EMP Burst — stun every robot on the map
+      STATE.enemies.forEach(en => {
+        if (en.behaviorType === 'robot') en.stunTimer = 120; // 2s
+      });
+      spawnScreenFlash(STATE, av.bulletColor);
       break;
-    case 'yara':
-      // STUB: Pacify Signal — confuse aliens
+    }
+    case 'yara': {
+      // Pacify Signal — confuse nearby aliens, radius/duration scale with Xenopathy
+      const lvl = getSkillLevel(av, 'xenopathy');
+      const radiusMult = lvl >= 3 ? 1.6 : lvl === 2 ? 1.4 : lvl === 1 ? 1.2 : 1;
+      const radius = C.ABILITY_RADIUS * radiusMult;
+      const duration = lvl >= 3 ? 240 : 180; // 4s at max level, else 3s
+      STATE.enemies.forEach(en => {
+        if (en.behaviorType === 'alien' && Math.hypot(en.x - av.x, en.y - av.y) <= radius) {
+          en.confuseTimer = duration;
+        }
+      });
+      spawnAbilityRing(STATE, av.x, av.y, radius, av.bulletColor);
       break;
-    case 'gage':
-      // STUB: Suppressing Fire — push enemies outward
+    }
+    case 'gage': {
+      // Suppressing Fire — push every enemy on the map away from the formation
+      const fx = STATE.formation.x, fy = STATE.formation.y;
+      STATE.enemies.forEach(en => {
+        const dx = en.x - fx, dy = en.y - fy;
+        const dist = Math.hypot(dx, dy) || 1;
+        const pushX = (dx / dist) * C.ABILITY_KNOCKBACK;
+        const pushY = (dy / dist) * C.ABILITY_KNOCKBACK;
+        const resolved = resolveMovement(en.x, en.y, pushX, pushY);
+        en.x = resolved.x; en.y = resolved.y;
+      });
+      spawnScreenFlash(STATE, av.bulletColor);
       break;
+    }
   }
 }

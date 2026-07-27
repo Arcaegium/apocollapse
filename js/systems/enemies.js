@@ -53,6 +53,10 @@ function spawnEnemy(STATE) {
     behaviorState: 'move',
     behaviorTimer: Math.floor(Math.random() * 40), // stagger initial behavior
     lurchAngle: Math.random() * Math.PI * 2,
+    // Active-ability status effects
+    slowTimer: 0, slowMult: 1,
+    stunTimer: 0,
+    confuseTimer: 0,
   });
 }
 
@@ -64,17 +68,31 @@ function updateEnemies(STATE) {
   STATE.enemies.forEach(en => {
     en.animPhase += 0.14;
     if (en.flashTimer > 0) en.flashTimer--;
+    if (en.slowTimer    > 0) en.slowTimer--;
+    if (en.stunTimer    > 0) en.stunTimer--;
+    if (en.confuseTimer > 0) en.confuseTimer--;
 
     const prevX = en.x, prevY = en.y;
 
-    switch (en.behaviorType) {
-      case 'zombie':   moveSwarm(en, fx, fy);   break;
-      case 'robot':    moveMarch(en, fx, fy);   break;
-      case 'alien':    moveFlank(en, fx, fy);   break;
-      case 'demon':    moveCharge(en, fx, fy);  break;
-      case 'eldritch': moveErratic(en, fx, fy); break;
-      case 'mutant':   moveSwarm(en, fx, fy);   break;
-      default:         moveSwarm(en, fx, fy);   break;
+    if (en.stunTimer > 0) {
+      // Frozen — no movement at all
+    } else if (en.confuseTimer > 0) {
+      moveConfused(STATE, en);
+    } else {
+      const savedSpeed = en.speed;
+      if (en.slowTimer > 0) en.speed = savedSpeed * en.slowMult;
+
+      switch (en.behaviorType) {
+        case 'zombie':   moveSwarm(en, fx, fy);   break;
+        case 'robot':    moveMarch(en, fx, fy);   break;
+        case 'alien':    moveFlank(en, fx, fy);   break;
+        case 'demon':    moveCharge(en, fx, fy);  break;
+        case 'eldritch': moveErratic(en, fx, fy); break;
+        case 'mutant':   moveSwarm(en, fx, fy);   break;
+        default:         moveSwarm(en, fx, fy);   break;
+      }
+
+      en.speed = savedSpeed;
     }
 
     // Terrain collision — revert if walked into a wall
@@ -86,6 +104,11 @@ function updateEnemies(STATE) {
     }
   });
 
+  // Confused enemies can kill each other — sweep for deaths after movement
+  for (let i = STATE.enemies.length - 1; i >= 0; i--) {
+    if (STATE.enemies[i].hp <= 0) killEnemy(STATE, i, STATE.enemies[i], 1.0);
+  }
+
   // Dying enemies
   STATE.dyingEnemies = STATE.dyingEnemies.filter(de => {
     de.frame++;
@@ -94,6 +117,29 @@ function updateEnemies(STATE) {
     de.scale = Math.max(0, 1 - (de.frame / C.DEATH_ANIM_FRAMES));
     return de.frame < C.DEATH_ANIM_FRAMES;
   });
+}
+
+// ── Status effects ─────────────────────────────────────────────
+// Confused enemies ignore the formation and go after the nearest
+// other enemy instead, chipping away at it until one of them dies.
+function moveConfused(STATE, en) {
+  let nearest = null, nearestDist = Infinity;
+  STATE.enemies.forEach(other => {
+    if (other === en) return;
+    const d = Math.hypot(other.x - en.x, other.y - en.y);
+    if (d < nearestDist) { nearestDist = d; nearest = other; }
+  });
+  if (!nearest) return;
+
+  const dx = nearest.x - en.x, dy = nearest.y - en.y;
+  const ATTACK_RANGE = 18;
+  if (nearestDist > ATTACK_RANGE) {
+    en.x += (dx / nearestDist) * en.speed;
+    en.y += (dy / nearestDist) * en.speed;
+  } else {
+    nearest.hp -= 0.15;
+    nearest.flashTimer = 4;
+  }
 }
 
 // ── Behaviors (all in world coords) ──────────────────────────

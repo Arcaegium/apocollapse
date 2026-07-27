@@ -64,3 +64,24 @@ function updateParticles(STATE) {
     return p.life > 0;
   });
 }
+
+// ── Ability cast feedback ───────────────────────────────────────
+// Radius-bound abilities (Rex, Yara) draw a world-space ring showing
+// exactly the area affected. Map-wide abilities (Sable, Gage) flash
+// the whole screen instead, since there's no meaningful radius to draw.
+
+function spawnAbilityRing(STATE, x, y, radius, color, life = 30) {
+  STATE.abilityRings.push({ x, y, radius, color, life, maxLife: life });
+}
+
+function spawnScreenFlash(STATE, color, life = 24) {
+  STATE.screenFlash = { color, life, maxLife: life };
+}
+
+function updateAbilityVFX(STATE) {
+  STATE.abilityRings = STATE.abilityRings.filter(r => { r.life--; return r.life > 0; });
+  if (STATE.screenFlash) {
+    STATE.screenFlash.life--;
+    if (STATE.screenFlash.life <= 0) STATE.screenFlash = null;
+  }
+}

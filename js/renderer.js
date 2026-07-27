@@ -13,10 +13,12 @@ function hs(wy) { return wy - CAM.y; }
 function render(STATE) {
   drawTerrain(ctx);           // terrain handles its own camera offset
   drawParticlesLayer(STATE);
+  drawAbilityRings(STATE);
   drawBulletsLayer(STATE);
   drawDyingEnemies(STATE);
   drawEnemies(STATE);
   drawAvatars(STATE);
+  drawScreenFlash(STATE);
 }
 
 // ── Particles ─────────────────────────────────────────────────
@@ -28,6 +30,31 @@ function drawParticlesLayer(STATE) {
     // Particles stored in world coords
     ctx.fillRect(ws(p.x) - p.size / 2, hs(p.y) - p.size / 2, p.size, p.size);
   });
+  ctx.globalAlpha = 1;
+}
+
+// ── Ability cast feedback ───────────────────────────────────────
+
+function drawAbilityRings(STATE) {
+  STATE.abilityRings.forEach(r => {
+    const t = r.life / r.maxLife; // 1 -> 0
+    const grow = 1 + (1 - t) * 0.3;
+    ctx.globalAlpha = t * 0.8;
+    ctx.strokeStyle = r.color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(ws(r.x), hs(r.y), r.radius * grow, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawScreenFlash(STATE) {
+  const f = STATE.screenFlash;
+  if (!f) return;
+  ctx.globalAlpha = (f.life / f.maxLife) * 0.35;
+  ctx.fillStyle = f.color;
+  ctx.fillRect(0, 0, C.W, C.H);
   ctx.globalAlpha = 1;
 }
 
@@ -105,6 +132,19 @@ function drawEnemies(STATE) {
       flash: en.flashTimer > 0,
       animPhase: en.animPhase,
     });
+
+    // Status effect indicator — stays up for the whole effect duration
+    if (en.stunTimer > 0) {
+      ctx.strokeStyle = '#44ccff'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(sx, sy, 14, 0, Math.PI * 2); ctx.stroke();
+    } else if (en.confuseTimer > 0) {
+      ctx.strokeStyle = '#ff66ff'; ctx.lineWidth = 1.5; ctx.setLineDash([2, 2]);
+      ctx.beginPath(); ctx.arc(sx, sy, 14, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+    } else if (en.slowTimer > 0) {
+      ctx.strokeStyle = '#88ff44'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(sx, sy, 14, 0, Math.PI * 2); ctx.stroke();
+    }
 
     // HP bar
     if (en.hp < en.maxHp) {

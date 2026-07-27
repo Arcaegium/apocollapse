@@ -158,7 +158,7 @@ function triggerAbility(STATE) {
   if (av.abilityCooldown > 0) return;
   av.abilityCooldown = av.activeAbility.cooldown;
   spawnAbilityBurst(STATE, av.x, av.y, av.bulletColor);
-  // STUB: applyAbilityEffect(STATE, av);
+  applyAbilityEffect(STATE, av);
 }
 
 // ── Effect flash ─────────────────────────────────────────────

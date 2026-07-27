@@ -60,6 +60,12 @@ const C = {
   DRAFT_OPTIONS: 3,
   CROSS_TRAIN_CHANCE: 0.15,
 
+  // Active abilities — all distances/durations in world units & frames,
+  // same coordinate system as everything else (not screen pixels)
+  ABILITY_RADIUS: 160,       // base AoE radius for Rex/Yara
+  ABILITY_SLOW_MULT: 0.45,   // Rex — enemy speed multiplier while slowed
+  ABILITY_KNOCKBACK: 90,     // Gage — push distance
+
   // Progression
   SAVE_KEY: 'apocollapse-save',
 

@@ -31,6 +31,8 @@ function createState() {
     enemies:      [],
     dyingEnemies: [],
     particles:    [],
+    abilityRings: [],
+    screenFlash:  null,
 
     spawnTimer:  0,
     wave:        1,
@@ -138,6 +140,7 @@ function gameLoop(STATE) {
   updateEnemies(STATE);
   checkCollisions(STATE);
   updateParticles(STATE);
+  updateAbilityVFX(STATE);
   updateCooldowns(STATE);
   updateWave(STATE);
   updateWaveAnnounce(STATE);
