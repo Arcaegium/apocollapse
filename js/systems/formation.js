@@ -10,8 +10,10 @@ function setupMouseTracking() {
   const canvas = document.getElementById('gameCanvas');
   canvas.addEventListener('mousemove', e => {
     const r = canvas.getBoundingClientRect();
-    mouseX = e.clientX - r.left;
-    mouseY = e.clientY - r.top;
+    // Canvas may be visually scaled (CSS transform) to fit the viewport —
+    // convert client coords back to the canvas's internal 640x640 space.
+    mouseX = (e.clientX - r.left) * (canvas.width / r.width);
+    mouseY = (e.clientY - r.top) * (canvas.height / r.height);
   });
 }
 
