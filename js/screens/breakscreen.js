@@ -7,12 +7,6 @@ let breakAvatarIndex = 0;
 let breakSelectedCard = null;
 let breakDraftOptions = [];
 
-function showBreakScreen(STATE) {
-  document.getElementById('screenBreak').style.display = 'flex';
-  breakAvatarIndex = 0;
-  showAvatarDraft(STATE, breakAvatarIndex);
-}
-
 function hideBreakScreen() {
   document.getElementById('screenBreak').style.display = 'none';
 }

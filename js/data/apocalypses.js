@@ -3,14 +3,6 @@
 // Adding a new apocalypse: add one entry here. Nothing else changes.
 // ============================================================
 
-// Tile type constants
-const TILE = {
-  FLOOR:  0,
-  WALL:   1,
-  COVER:  2,   // impassable to enemies, bullets pass through
-  HAZARD: 3,   // walkable, applies periodic effect
-};
-
 const APOCALYPSE_DATA = {
 
   zombie: {
