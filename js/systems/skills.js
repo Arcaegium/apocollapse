@@ -4,6 +4,15 @@
 // Effect application is STUBBED — implementation comes next pass
 // ============================================================
 
+// Fisher-Yates shuffle, in place
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 // Build a draft pool for an avatar
 // Returns array of {skillDef, currentLevel} for display
 function buildDraftPool(av) {
