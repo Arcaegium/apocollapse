@@ -20,10 +20,38 @@
       <div class="hud-block" style="text-align:center">
         <span class="hud-label">Wave</span>
         <span class="hud-value" id="hudWave">1</span>
+        <div class="wave-progress-track"><div class="wave-progress-fill" id="waveProgressFill"></div></div>
       </div>
       <div class="hud-block" style="text-align:right">
         <span class="hud-label">Kills</span>
         <span class="hud-value" id="hudKills">0</span>
+      </div>
+    </div>
+
+    <!-- MC status — the one life that matters -->
+    <div id="mcStatus">
+      <div class="mc-hp-row">
+        <span class="mc-hp-label">MC</span>
+        <div class="mc-hp-track"><div class="mc-hp-fill" id="mcHpFill"></div></div>
+        <span class="mc-hp-text" id="mcHpText">100/100</span>
+      </div>
+      <div class="mc-bank-row">
+        <span class="mc-bank-label">Kill Bank</span>
+        <span class="mc-bank-value" id="mcBankValue">0</span>
+      </div>
+      <div class="mc-abilities">
+        <div class="mc-slot" id="mcSlotWard">
+          <span class="mc-slot-key">Q</span>
+          <span class="mc-slot-name">Ward Pulse</span>
+          <span class="mc-slot-cost" id="mcWardCost">6</span>
+          <div class="mc-slot-cdtrack"><div class="mc-slot-cdfill" id="mcWardCd"></div></div>
+        </div>
+        <div class="mc-slot" id="mcSlotShield">
+          <span class="mc-slot-key">E</span>
+          <span class="mc-slot-name">Adaptive Shield</span>
+          <span class="mc-slot-cost" id="mcShieldCost">12</span>
+          <div class="mc-slot-cdtrack"><div class="mc-slot-cdfill" id="mcShieldCd"></div></div>
+        </div>
       </div>
     </div>
 
@@ -43,8 +71,10 @@
     <div id="controls">
       <span>WASD move</span>
       <span>mouse aim</span>
-      <span>1-4 / scroll select ability</span>
-      <span>space use</span>
+      <span>1-4 / scroll select escort ability</span>
+      <span>space use escort ability</span>
+      <span>Q ward pulse</span>
+      <span>E adaptive shield</span>
     </div>
 
     <!-- Screen overlays — shown/hidden by screen system -->
@@ -66,6 +96,7 @@
 <script src="js/systems/particles.js"></script>
 <script src="js/systems/terrain.js"></script>
 <script src="js/systems/formation.js"></script>
+<script src="js/systems/mc.js"></script>
 <script src="js/systems/combat.js"></script>
 <script src="js/systems/enemies.js"></script>
 <script src="js/systems/skills.js"></script>

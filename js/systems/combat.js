@@ -123,13 +123,29 @@ function checkCollisions(STATE) {
     if (consumed) STATE.bullets.splice(bi, 1);
   }
 
-  // Enemies touching formation center = death
+  // Enemies touching the MC deal continuous damage — the escorts never
+  // take damage themselves, only the protagonist at the formation center.
   const fx = STATE.formation.x, fy = STATE.formation.y;
-  for (const en of STATE.enemies) {
-    if (Math.hypot(en.x - fx, en.y - fy) < C.KILL_RADIUS) {
-      triggerDeath(STATE);
-      return;
+  const mc = STATE.mc;
+  if (mc.invulnTimer <= 0) {
+    let touching = 0;
+    for (const en of STATE.enemies) {
+      if (Math.hypot(en.x - fx, en.y - fy) < C.KILL_RADIUS) touching++;
     }
+    if (touching > 0) {
+      let dmg = (C.MC_CONTACT_DPS / 60) * touching;
+      if (mc.shieldHp > 0) {
+        const absorbed = Math.min(mc.shieldHp, dmg);
+        mc.shieldHp -= absorbed;
+        dmg -= absorbed;
+      }
+      mc.hp -= dmg;
+    }
+  }
+
+  if (mc.hp <= 0) {
+    mc.hp = 0;
+    triggerDeath(STATE);
   }
 }
 
@@ -139,6 +155,10 @@ function killEnemy(STATE, idx, en, eff) {
   STATE.score += Math.round(10 * STATE.wave * eff);
   STATE.kills++;
   STATE.waveKills++;
+  // Kill bank fuels MC's abilities — weighted by effectiveness, so
+  // matching the right escort against the right apocalypse type is
+  // what actually maximizes how often you get to use them.
+  STATE.killBank += Math.max(1, Math.round(C.BANK_PER_KILL * eff));
   updateHUD(STATE);
 
   // STUB: check recruitment triggers

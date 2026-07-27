@@ -315,12 +315,17 @@ function drawTile(ctx, tile, apocData, sx, sy, T, tx, ty) {
       ctx.fillRect(sx, sy, T, T);
       // Top and left accent edges — gives 3D block feel
       ctx.fillStyle = acc;
-      ctx.fillRect(sx, sy, T, 2);
-      ctx.fillRect(sx, sy, 2, T);
+      ctx.fillRect(sx, sy, T, 3);
+      ctx.fillRect(sx, sy, 3, T);
       // Darker bottom-right shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.fillRect(sx, sy + T - 2, T, 2);
-      ctx.fillRect(sx + T - 2, sy, 2, T);
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(sx, sy + T - 3, T, 3);
+      ctx.fillRect(sx + T - 3, sy, 3, T);
+      // Bright full-perimeter rim — theme-independent "this is solid" cue,
+      // since apoc wall palettes can be nearly as dark as the floor
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(sx + 1, sy + 1, T - 2, T - 2);
       break;
     }
 
@@ -337,6 +342,11 @@ function drawTile(ctx, tile, apocData, sx, sy, T, tx, ty) {
       ctx.fillStyle = acc;
       ctx.fillRect(sx + 3, sy + 5, T - 6, 2);
       ctx.fillRect(sx + 3, sy + 5, 2, T - 7);
+      // Cover also blocks movement (bullets pass, players/enemies don't) —
+      // give it the same bright rim as walls so that's clear at a glance
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(sx + 3.5, sy + 5.5, T - 7, T - 8);
       break;
     }
 

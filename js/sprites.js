@@ -22,6 +22,12 @@ const SPRITE_DATA = {
     px:['....LLLLLLLL....','...LKKKKKKKKL...','...LWWWWWWWWL...','...LWWEEWWEWL...','...LWWWWWWWWL...','...LWWWWRRWWL...','...LLLLLLLLLL...','..JJJJJJJJJJJ..','JJRJJJJJJJRJJJ.','JJRJJJJJJJRJJJ.','..JJJJJJJJJJJ..','...JJJBBBBJJ....','...GG.....GG....','...GG.....GG....','...TT.....TT....','................']
   },
 
+  // ── MC ── the protagonist everyone in the formation is protecting
+  mc: {
+    p:{H:'#3a2e26',S:'#e8c8a6',W:'#f4e0c4',E:'#1a1a2a',B:'#242424',G:'#f2f0e6',A:'#d4af6a',T:'#161616'},
+    px:['....HHHHHHH.....','...HHHHHHHHHH...','...HSSSSSSSH....','...HSWWWWWSH....','...HSWEBEBSH....','...HSWWWWWSH....','...HSSSSSSSH....','..GGGGGGGGGGG...','GGGGGGGGGGGGG...','GGAGGGGGGGAGG...','..GGGGGGGGGGG...','...GGGAAAGGG....','...BB.....BB....','...BB.....BB....','...TT.....TT....','................']
+  },
+
   // ── Enemies ──
   zombie: {
     p:{G:'#4a7a3a',D:'#2d4a22',W:'#cce0aa',E:'#cc2200',R:'#882200',T:'#3a5a28'},

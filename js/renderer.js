@@ -18,6 +18,7 @@ function render(STATE) {
   drawDyingEnemies(STATE);
   drawEnemies(STATE);
   drawAvatars(STATE);
+  drawMC(STATE);
   drawScreenFlash(STATE);
 }
 
@@ -211,6 +212,39 @@ function drawAvatars(STATE) {
     ctx.font = '9px "Share Tech Mono"'; ctx.textAlign = 'center';
     ctx.fillText(av.shortName, ws(av.x), hs(av.y) + 26);
   });
+}
+
+// ── MC ────────────────────────────────────────────────────────
+// The protagonist, at formation center. Only entity with HP/collision.
+
+function drawMC(STATE) {
+  const mc = STATE.mc;
+  const f = STATE.formation;
+  const sx = ws(f.x), sy = hs(f.y);
+
+  // Shield aura — pulses gently while the barrier holds
+  if (mc.shieldHp > 0) {
+    ctx.strokeStyle = '#5ec9e0';
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.55 + Math.sin(STATE.frame * 0.2) * 0.2;
+    ctx.beginPath(); ctx.arc(sx, sy, 20, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  // Invulnerability — blink instead of the red hit-flash (that means something else)
+  const invuln = mc.invulnTimer > 0;
+  if (invuln) ctx.globalAlpha = (Math.floor(STATE.frame / 4) % 2 === 0) ? 1 : 0.35;
+
+  drawSpriteAt('mc', sx, sy, { animPhase: mc.animPhase });
+
+  if (invuln) ctx.globalAlpha = 1;
+
+  // HP bar — the one stat that ends the run
+  const bw = 30, bh = 4, bx = sx - bw / 2, by = sy - 26;
+  ctx.fillStyle = '#220000'; ctx.fillRect(bx, by, bw, bh);
+  const pct = Math.max(0, mc.hp / mc.maxHp);
+  ctx.fillStyle = pct > 0.3 ? '#44dd66' : '#ff4422';
+  ctx.fillRect(bx, by, bw * pct, bh);
 }
 
 // ── Ability bar ───────────────────────────────────────────────

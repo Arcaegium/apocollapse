@@ -60,11 +60,34 @@ const C = {
   DRAFT_OPTIONS: 3,
   CROSS_TRAIN_CHANCE: 0.15,
 
-  // Active abilities — all distances/durations in world units & frames,
-  // same coordinate system as everything else (not screen pixels)
+  // Active abilities (escort) — all distances/durations in world units &
+  // frames, same coordinate system as everything else (not screen pixels)
   ABILITY_RADIUS: 160,       // base AoE radius for Rex/Yara
   ABILITY_SLOW_MULT: 0.45,   // Rex — enemy speed multiplier while slowed
   ABILITY_KNOCKBACK: 90,     // Gage — push distance
+
+  // MC — the protagonist. Only the MC takes damage / collides with walls;
+  // the escorts orbit around them and never individually die.
+  MC_MAX_HP: 100,
+  MC_CONTACT_DPS: 25,        // damage/sec per enemy touching the MC
+
+  // Kill bank — fuels MC abilities instead of HP. Resets every wave.
+  // Points per kill scale with hit effectiveness, so the bank rewards
+  // matching the right escort against the right apocalypse type.
+  BANK_PER_KILL: 3,
+
+  // MC — Ward Pulse (Q): knock enemies back + brief invulnerability
+  WARD_RADIUS: 140,
+  WARD_KNOCKBACK: 100,
+  WARD_INVULN_FRAMES: 45,    // 0.75s
+  WARD_COOLDOWN: 300,        // 5s
+  WARD_KILL_COST: 6,
+
+  // MC — Adaptive Shield (E): temporary damage-absorbing barrier
+  SHIELD_KILL_COST: 12,
+  SHIELD_AMOUNT: 50,
+  SHIELD_DURATION: 300,      // 5s
+  SHIELD_COOLDOWN: 480,      // 8s
 
   // Progression
   SAVE_KEY: 'apocollapse-save',

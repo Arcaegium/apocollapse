@@ -17,6 +17,17 @@ function createState() {
 
     formation: { x: startX, y: startY, rotation: 0 },
 
+    // The protagonist — the escorts orbit and protect this position.
+    // Collision + damage only ever apply here, never to the escorts.
+    mc: {
+      hp: C.MC_MAX_HP, maxHp: C.MC_MAX_HP,
+      shieldHp: 0, shieldTimer: 0,
+      invulnTimer: 0,
+      wardCooldown: 0,
+      shieldCooldown: 0,
+      animPhase: 0,
+    },
+
     avatars: AVATAR_CONFIG
       .filter(cfg => cfg.unlocked)
       .slice(0, 4)
@@ -38,6 +49,7 @@ function createState() {
     wave:        1,
     waveTimer:   0,
     waveKills:   0,
+    killBank:    0,
     activeApocs: ['zombie'],
     waveState:   'FIGHTING',
 
@@ -141,11 +153,14 @@ function gameLoop(STATE) {
   checkCollisions(STATE);
   updateParticles(STATE);
   updateAbilityVFX(STATE);
+  updateMC(STATE);
   updateCooldowns(STATE);
   updateWave(STATE);
   updateWaveAnnounce(STATE);
   updateEffectFlash();
   updateAbilityBar(STATE);
+  updateMCHud(STATE);
+  updateWaveProgressUI(STATE);
 
   render(STATE);
 
@@ -176,8 +191,12 @@ function processInput(STATE) {
     if (kjp[String(i)]) STATE.selectedAbility = i - 1;
   }
 
-  // Space — use ability
+  // Space — use escort ability
   if (kjp[' ']) triggerAbility(STATE);
+
+  // Q / E — MC's own defensive abilities
+  if (kjp['q'] || kjp['Q']) triggerWardPulse(STATE);
+  if (kjp['e'] || kjp['E']) triggerAdaptiveShield(STATE);
 
   // P or Escape — pause
   if (kjp['p'] || kjp['P'] || kjp['Escape']) togglePause(STATE);

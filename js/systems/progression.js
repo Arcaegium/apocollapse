@@ -35,6 +35,7 @@ function startNextWave(STATE) {
   STATE.wave++;
   STATE.waveTimer = 0;
   STATE.waveKills = 0;
+  STATE.killBank = 0; // kill bank resets at the start of every wave
   STATE.waveState = 'FIGHTING';
   STATE.activeApocs = getApocSequence(STATE.wave);
   STATE.enemies = [];
@@ -91,6 +92,48 @@ function updateHUD(STATE) {
   if (s) s.textContent = STATE.score.toLocaleString();
   if (w) w.textContent = STATE.wave;
   if (k) k.textContent = STATE.kills;
+}
+
+// Wave is timed, not kill-based — this shows how close to the next
+// wave transition (or break screen) the current wave is.
+function updateWaveProgressUI(STATE) {
+  const fill = document.getElementById('waveProgressFill');
+  if (!fill) return;
+  const duration = STATE.waveState === 'TRANSITION' ? C.WAVE_TRANSITION : C.WAVE_DURATION;
+  const pct = Math.min(100, (STATE.waveTimer / duration) * 100);
+  fill.style.width = pct + '%';
+}
+
+function updateMCHud(STATE) {
+  const mc = STATE.mc;
+
+  const hpFill = document.getElementById('mcHpFill');
+  const hpText = document.getElementById('mcHpText');
+  if (hpFill) {
+    const pct = Math.max(0, mc.hp / mc.maxHp) * 100;
+    hpFill.style.width = pct + '%';
+    hpFill.classList.toggle('low', pct <= 30);
+  }
+  if (hpText) hpText.textContent = `${Math.ceil(mc.hp)}/${mc.maxHp}`;
+
+  const bankValue = document.getElementById('mcBankValue');
+  if (bankValue) bankValue.textContent = STATE.killBank;
+
+  const wardCd = document.getElementById('mcWardCd');
+  const wardSlot = document.getElementById('mcSlotWard');
+  if (wardCd) wardCd.style.width = (1 - mc.wardCooldown / C.WARD_COOLDOWN) * 100 + '%';
+  if (wardSlot) {
+    wardSlot.classList.toggle('on-cooldown', mc.wardCooldown > 0);
+    wardSlot.classList.toggle('unaffordable', STATE.killBank < C.WARD_KILL_COST);
+  }
+
+  const shieldCd = document.getElementById('mcShieldCd');
+  const shieldSlot = document.getElementById('mcSlotShield');
+  if (shieldCd) shieldCd.style.width = (1 - mc.shieldCooldown / C.SHIELD_COOLDOWN) * 100 + '%';
+  if (shieldSlot) {
+    shieldSlot.classList.toggle('on-cooldown', mc.shieldCooldown > 0);
+    shieldSlot.classList.toggle('unaffordable', STATE.killBank < C.SHIELD_KILL_COST);
+  }
 }
 
 // ── Save / Load ───────────────────────────────────────────────

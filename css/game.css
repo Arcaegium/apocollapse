@@ -45,9 +45,58 @@ html, body {
 .hud-label { font-size: 10px; color: #888; letter-spacing: .1em; text-transform: uppercase; }
 .hud-value { font-size: 22px; font-family: 'Bebas Neue', sans-serif; color: #e0e0c0; line-height: 1; }
 
+.wave-progress-track {
+  width: 60px; height: 3px; margin-top: 3px; align-self: center;
+  background: #1a1a1a; border-radius: 1px; overflow: hidden;
+}
+.wave-progress-fill { height: 100%; width: 0%; background: #e0e0c0; }
+
+/* ── MC status ── */
+#mcStatus {
+  position: absolute; top: 40px; left: 0; width: 640px;
+  padding: 0 14px;
+  display: flex; flex-direction: column; gap: 5px;
+  pointer-events: none; z-index: 10;
+}
+.mc-hp-row { display: flex; align-items: center; gap: 8px; }
+.mc-hp-label {
+  font-size: 10px; color: #888; letter-spacing: .1em; text-transform: uppercase;
+}
+.mc-hp-track {
+  flex: 1; height: 8px; background: #220000;
+  border: 1px solid #331111; border-radius: 2px; overflow: hidden;
+}
+.mc-hp-fill { height: 100%; width: 100%; background: #44dd66; transition: width .15s; }
+.mc-hp-fill.low { background: #ff4422; }
+.mc-hp-text { font-size: 10px; color: #aaa; min-width: 46px; text-align: right; }
+
+.mc-bank-row { display: flex; align-items: baseline; gap: 6px; }
+.mc-bank-label { font-size: 10px; color: #888; letter-spacing: .1em; text-transform: uppercase; }
+.mc-bank-value { font-size: 15px; font-family: 'Bebas Neue', sans-serif; color: #d4af6a; }
+
+.mc-abilities { display: flex; gap: 8px; }
+.mc-slot {
+  flex: 1; border: 1px solid #2a2a2a; border-radius: 3px;
+  padding: 4px 8px; background: rgba(10,10,15,.85);
+  position: relative; overflow: hidden;
+}
+.mc-slot.on-cooldown { opacity: .6; }
+.mc-slot.unaffordable .mc-slot-cost { color: #ff4422; }
+.mc-slot-key {
+  font-family: 'Bebas Neue', sans-serif; font-size: 14px;
+  color: #d4af6a; margin-right: 6px;
+}
+.mc-slot-name { font-size: 10px; color: #999; }
+.mc-slot-cost {
+  float: right; font-size: 10px; color: #6a8a6a;
+}
+.mc-slot-cost::after { content: ' kills'; }
+.mc-slot-cdtrack { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #1a1a1a; }
+.mc-slot-cdfill { position: absolute; bottom: 0; left: 0; height: 2px; background: #d4af6a; opacity: .8; }
+
 /* ── Apocalypse banner ── */
 #apocBanner {
-  position: absolute; top: 50px; left: 0; width: 640px;
+  position: absolute; top: 108px; left: 0; width: 640px;
   display: flex; gap: 5px; justify-content: center; flex-wrap: wrap;
   pointer-events: none; z-index: 10;
 }
@@ -69,7 +118,7 @@ html, body {
 
 /* ── Effectiveness flash ── */
 #effectFlash {
-  position: absolute; top: 74px; left: 50%;
+  position: absolute; top: 135px; left: 50%;
   transform: translateX(-50%);
   font-size: 11px; letter-spacing: .08em;
   pointer-events: none; z-index: 12; opacity: 0;

@@ -58,6 +58,7 @@ function updateFormation(STATE) {
 
   // Avatar positions in world space, aim toward mouse world pos
   const isMoving = dx !== 0 || dy !== 0;
+  if (isMoving) STATE.mc.animPhase += 0.18;
   STATE.avatars.forEach((av, i) => {
     const slotAngle = SLOT_ANGLES[i] + f.rotation;
     av.x = f.x + Math.cos(slotAngle) * C.FORMATION_RADIUS;
